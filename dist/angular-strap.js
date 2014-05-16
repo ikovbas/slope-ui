@@ -1,6 +1,6 @@
 /**
  * angular-strap
- * @version v2.0.2 - 2014-05-14
+ * @version v2.0.2 - 2014-05-16
  * @link http://mgcrea.github.io/angular-strap
  * @author Olivier Louvignes (olivier@mg-crea.com)
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -3530,7 +3530,8 @@ angular.module('mgcrea.ngStrap.typeahead', [
     '$window',
     '$rootScope',
     '$tooltip',
-    function ($window, $rootScope, $tooltip) {
+    '$parse',
+    function ($window, $rootScope, $tooltip, $parse) {
       var bodyEl = angular.element($window.document.body);
       function TypeaheadFactory(element, controller, config) {
         var $typeahead = {};
@@ -3576,6 +3577,11 @@ angular.module('mgcrea.ngStrap.typeahead', [
             parentScope.$digest();
           // Emit event
           scope.$emit('$typeahead.select', value, index);
+          if (options.onSelect) {
+            var onSelectFn = $parse(options.onSelect);
+            if (typeof onSelectFn === 'function')
+              onSelectFn(scope);
+          }
         };
         // Protected methods
         $typeahead.$isVisible = function () {
@@ -3669,7 +3675,8 @@ angular.module('mgcrea.ngStrap.typeahead', [
           'template',
           'filter',
           'limit',
-          'minLength'
+          'minLength',
+          'onSelect'
         ], function (key) {
           if (angular.isDefined(attr[key]))
             options[key] = attr[key];
@@ -3694,7 +3701,7 @@ angular.module('mgcrea.ngStrap.typeahead', [
             if (values.length > limit)
               values = values.slice(0, limit);
             // Do not re-queue an update if a correct value has been selected
-            if (values.length === 1 && values[0].value === newValue)
+            if (values.length === 1 && values[0].value === newValue && typeof controller.$viewValue === 'string')
               return;
             typeahead.update(values);
             // Queue a new rendering that will leverage collection loading
@@ -3704,6 +3711,9 @@ angular.module('mgcrea.ngStrap.typeahead', [
         // Model rendering in view
         controller.$render = function () {
           // console.warn('$render', element.attr('ng-model'), 'controller.$modelValue', typeof controller.$modelValue, controller.$modelValue, 'controller.$viewValue', typeof controller.$viewValue, controller.$viewValue);
+          if (typeof controller.$viewValue !== 'string' && !typeahead.$scope.$matches.length) {
+            return;
+          }
           if (controller.$isEmpty(controller.$viewValue))
             return element.val('');
           var index = typeahead.$getIndex(controller.$modelValue);

@@ -79,7 +79,7 @@ angular.module('mgcrea.ngStrap.typeahead', ['mgcrea.ngStrap.tooltip', 'mgcrea.ng
           scope.$emit('$typeahead.select', value, index);
           if(options.onSelect) {
             var onSelectFn = $parse(options.onSelect);
-            if(typeof onSelectFn == "function") onSelectFn(scope);
+            if(typeof onSelectFn === 'function') onSelectFn(scope);
           }
         };
 
@@ -193,7 +193,7 @@ angular.module('mgcrea.ngStrap.typeahead', ['mgcrea.ngStrap.tooltip', 'mgcrea.ng
           .then(function(values) {
             if(values.length > limit) values = values.slice(0, limit);
             // Do not re-queue an update if a correct value has been selected
-            if(values.length === 1 && values[0].value === newValue && typeof controller.$viewValue === "string") return;
+            if(values.length === 1 && values[0].value === newValue && typeof controller.$viewValue === 'string') return;
             typeahead.update(values);
             // Queue a new rendering that will leverage collection loading
             controller.$render();
@@ -203,7 +203,7 @@ angular.module('mgcrea.ngStrap.typeahead', ['mgcrea.ngStrap.tooltip', 'mgcrea.ng
         // Model rendering in view
         controller.$render = function () {
           // console.warn('$render', element.attr('ng-model'), 'controller.$modelValue', typeof controller.$modelValue, controller.$modelValue, 'controller.$viewValue', typeof controller.$viewValue, controller.$viewValue);
-          if(!typeahead.$scope.$matches.length){
+          if(typeof controller.$viewValue !== 'string' && !typeahead.$scope.$matches.length){
             return;
           }
           if(controller.$isEmpty(controller.$viewValue)) return element.val('');
