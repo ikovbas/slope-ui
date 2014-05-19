@@ -170,7 +170,7 @@ angular.module('mgcrea.ngStrap.typeahead', ['mgcrea.ngStrap.tooltip', 'mgcrea.ng
 
         // Directive options
         var options = {scope: scope};
-        angular.forEach(['placement', 'container', 'delay', 'trigger', 'keyboard', 'html', 'animation', 'template', 'filter', 'limit', 'minLength', 'onSelect', 'label'], function(key) {
+        angular.forEach(['placement', 'container', 'delay', 'trigger', 'keyboard', 'html', 'animation', 'template', 'filter', 'limit', 'minLength', 'onSelect', 'inputLabel'], function(key) {
           if(angular.isDefined(attr[key])) options[key] = attr[key];
         });
 
@@ -209,8 +209,8 @@ angular.module('mgcrea.ngStrap.typeahead', ['mgcrea.ngStrap.tooltip', 'mgcrea.ng
           if(controller.$isEmpty(controller.$viewValue)) return element.val('');
           var index = typeahead.$getIndex(controller.$modelValue);
           var selected = '';
-          if(options.label && angular.isNumber(index)) {
-            var getViewValue = $parse(options.label);
+          if(options.inputLabel && angular.isNumber(index)) {
+            var getViewValue = $parse(options.inputLabel);
             selected = getViewValue(scope);
             if (!selected) return;
           }
