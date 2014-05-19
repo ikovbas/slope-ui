@@ -175,7 +175,7 @@ angular.module('mgcrea.ngStrap.typeahead', [
           'limit',
           'minLength',
           'onSelect',
-          'label'
+          'inputLabel'
         ], function (key) {
           if (angular.isDefined(attr[key]))
             options[key] = attr[key];
@@ -217,8 +217,8 @@ angular.module('mgcrea.ngStrap.typeahead', [
             return element.val('');
           var index = typeahead.$getIndex(controller.$modelValue);
           var selected = '';
-          if (options.label && angular.isNumber(index)) {
-            var getViewValue = $parse(options.label);
+          if (options.inputLabel && angular.isNumber(index)) {
+            var getViewValue = $parse(options.inputLabel);
             selected = getViewValue(scope);
             if (!selected)
               return;
