@@ -170,7 +170,7 @@ angular.module('mgcrea.ngStrap.typeahead', ['mgcrea.ngStrap.tooltip', 'mgcrea.ng
 
         // Directive options
         var options = {scope: scope};
-        angular.forEach(['placement', 'container', 'delay', 'trigger', 'keyboard', 'html', 'animation', 'template', 'filter', 'limit', 'minLength', 'onSelect'], function(key) {
+        angular.forEach(['placement', 'container', 'delay', 'trigger', 'keyboard', 'html', 'animation', 'template', 'filter', 'limit', 'minLength', 'onSelect', 'label'], function(key) {
           if(angular.isDefined(attr[key])) options[key] = attr[key];
         });
 
@@ -208,8 +208,16 @@ angular.module('mgcrea.ngStrap.typeahead', ['mgcrea.ngStrap.tooltip', 'mgcrea.ng
           }
           if(controller.$isEmpty(controller.$viewValue)) return element.val('');
           var index = typeahead.$getIndex(controller.$modelValue);
-          var selected = angular.isDefined(index) ? typeahead.$scope.$matches[index].label : controller.$viewValue;
-          selected = angular.isObject(selected) ? selected.label : selected;
+          var selected = '';
+          if(options.label && angular.isNumber(index)) {
+            var getViewValue = $parse(options.label);
+            selected = getViewValue(scope);
+            if (!selected) return;
+          }
+          else {
+            selected = angular.isDefined(index) ? typeahead.$scope.$matches[index].label : controller.$viewValue;
+            if (angular.isObject(selected)) selected = selected.label;
+          }
           element.val(selected.replace(/<(?:.|\n)*?>/gm, '').trim());
         };
 
