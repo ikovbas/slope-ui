@@ -90,7 +90,8 @@ angular.module('mgcrea.ngStrap.typeahead', ['mgcrea.ngStrap.tooltip', 'mgcrea.ng
             return !!scope.$matches.length;
           }
           // minLength support
-          return scope.$matches.length && angular.isString(controller.$viewValue) && controller.$viewValue.length >= options.minLength;
+          var isMinLength = (angular.isString(controller.$viewValue) && controller.$viewValue.length >= options.minLength);
+          return scope.$matches.length && (isMinLength || parseInt(options.minLength) === 0);
         };
 
         $typeahead.$getIndex = function(value) {
@@ -193,7 +194,7 @@ angular.module('mgcrea.ngStrap.typeahead', ['mgcrea.ngStrap.tooltip', 'mgcrea.ng
           .then(function(values) {
             if(values.length > limit) values = values.slice(0, limit);
             // Do not re-queue an update if a correct value has been selected
-            if(values.length === 1 && values[0].value === newValue && typeof controller.$viewValue === 'string') return;
+            if(values.length === 1 && values[0].value === newValue) return;
             typeahead.update(values);
             // Queue a new rendering that will leverage collection loading
             controller.$render();
