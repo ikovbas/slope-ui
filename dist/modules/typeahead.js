@@ -1,6 +1,6 @@
 /**
  * angular-strap
- * @version v2.0.2 - 2014-05-19
+ * @version v2.0.2 - 2014-05-20
  * @link http://mgcrea.github.io/angular-strap
  * @author Olivier Louvignes (olivier@mg-crea.com)
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -87,7 +87,8 @@ angular.module('mgcrea.ngStrap.typeahead', [
             return !!scope.$matches.length;
           }
           // minLength support
-          return scope.$matches.length && angular.isString(controller.$viewValue) && controller.$viewValue.length >= options.minLength;
+          var isMinLength = angular.isString(controller.$viewValue) && controller.$viewValue.length >= options.minLength;
+          return scope.$matches.length && (isMinLength || parseInt(options.minLength) === 0);
         };
         $typeahead.$getIndex = function (value) {
           var l = scope.$matches.length, i = l;
@@ -200,7 +201,7 @@ angular.module('mgcrea.ngStrap.typeahead', [
             if (values.length > limit)
               values = values.slice(0, limit);
             // Do not re-queue an update if a correct value has been selected
-            if (values.length === 1 && values[0].value === newValue && typeof controller.$viewValue === 'string')
+            if (values.length === 1 && values[0].value === newValue)
               return;
             typeahead.update(values);
             // Queue a new rendering that will leverage collection loading
