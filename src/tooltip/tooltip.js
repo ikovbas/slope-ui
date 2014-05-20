@@ -21,7 +21,7 @@ angular.module('mgcrea.ngStrap.tooltip', ['mgcrea.ngStrap.helpers.dimensions'])
       delay: 0
     };
 
-    this.$get = function($window, $rootScope, $compile, $q, $templateCache, $http, $animate, $timeout, dimensions, $$rAF) {
+    this.$get = function($window, $rootScope, $compile, $q, $templateCache, $http, $animate, dimensions, $$rAF) {
 
       var trim = String.prototype.trim;
       var isTouch = 'createTouch' in $window.document;
@@ -155,6 +155,9 @@ angular.module('mgcrea.ngStrap.tooltip', ['mgcrea.ngStrap.helpers.dimensions'])
             tipElement = null;
           }
 
+          //cancel pending callbacks
+          clearTimeout(timeout);
+
           // Destroy scope
           scope.$destroy();
 
@@ -186,7 +189,7 @@ angular.module('mgcrea.ngStrap.tooltip', ['mgcrea.ngStrap.helpers.dimensions'])
           tipElement = $tooltip.$element = tipLinker(scope, function(clonedElement, scope) {});
 
           // Set the initial positioning.
-          tipElement.css({top: '0px', left: '0px', display: 'block'}).addClass(options.placement);
+          tipElement.css({top: '-9999px', left: '-9999px', display: 'block'}).addClass(options.placement);
 
           // Options: animation
           if(options.animation) tipElement.addClass(options.animation);
