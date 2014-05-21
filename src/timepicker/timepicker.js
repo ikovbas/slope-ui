@@ -25,6 +25,8 @@ angular.module('mgcrea.ngStrap.timepicker', ['mgcrea.ngStrap.helpers.dateParser'
       hourStep: 1,
       minuteStep: 5,
       arrows: 'pager'
+      iconUp: 'glyphicon glyphicon-chevron-up',
+      iconDown: 'glyphicon glyphicon-chevron-down'
     };
 
     this.$get = function($window, $document, $rootScope, $sce, $locale, dateFilter, $tooltip) {
@@ -42,12 +44,16 @@ angular.module('mgcrea.ngStrap.timepicker', ['mgcrea.ngStrap.helpers.dateParser'
         var scope = $timepicker.$scope;
 
         // View vars
+
         var selectedIndex = 0;
         var startDate = controller.$dateValue || new Date();
         var viewDate = {hour: startDate.getHours(), meridian: startDate.getHours() < 12, minute: startDate.getMinutes(), second: startDate.getSeconds(), millisecond: startDate.getMilliseconds()};
 
         var format = $locale.DATETIME_FORMATS[options.timeFormat] || options.timeFormat;
         var formats = /(h+)[:]?(m+)[ ]?(a?)/i.exec(format).slice(1);
+        scope.$iconUp = options.iconUp;
+        scope.$iconDown = options.iconDown;
+
         // Scope methods
 
         scope.$select = function(date, index) {
