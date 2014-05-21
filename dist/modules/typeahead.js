@@ -215,12 +215,12 @@ angular.module('mgcrea.ngStrap.typeahead', [
             return element.val('');
           var index = typeahead.$getIndex(controller.$modelValue);
           var selected = '';
-          if (options.inputLabel && angular.isNumber(index)) {
+          if (options.inputLabel) {
             var getViewValue = $parse(options.inputLabel);
             selected = getViewValue(scope);
           } else {
             /* Get the label from the ng-options parser if it exists, otherwise use the viewValue (label property if viewValue is object) */
-            selected = angular.isDefined(index) ? typeahead.$scope.$matches[index].label : controller.$viewValue;
+            selected = angular.isNumber(index) ? typeahead.$scope.$matches[index].label : controller.$viewValue;
             if (angular.isObject(selected))
               selected = selected.label;
           }
