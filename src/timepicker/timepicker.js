@@ -24,7 +24,7 @@ angular.module('mgcrea.ngStrap.timepicker', ['mgcrea.ngStrap.helpers.dateParser'
       length: 5,
       hourStep: 1,
       minuteStep: 5,
-      arrows: 'pager'
+      arrows: 'pager',
       iconUp: 'glyphicon glyphicon-chevron-up',
       iconDown: 'glyphicon glyphicon-chevron-down'
     };
