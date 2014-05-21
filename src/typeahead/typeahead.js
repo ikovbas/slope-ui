@@ -204,21 +204,19 @@ angular.module('mgcrea.ngStrap.typeahead', ['mgcrea.ngStrap.tooltip', 'mgcrea.ng
         // Model rendering in view
         controller.$render = function () {
           // console.warn('$render', element.attr('ng-model'), 'controller.$modelValue', typeof controller.$modelValue, controller.$modelValue, 'controller.$viewValue', typeof controller.$viewValue, controller.$viewValue);
-          if(typeof controller.$viewValue !== 'string' && !typeahead.$scope.$matches.length){
-            return;
-          }
           if(controller.$isEmpty(controller.$viewValue)) return element.val('');
           var index = typeahead.$getIndex(controller.$modelValue);
           var selected = '';
           if(options.inputLabel && angular.isNumber(index)) {
             var getViewValue = $parse(options.inputLabel);
             selected = getViewValue(scope);
-            if (!selected) return;
           }
           else {
+            /* Get the label from the ng-options parser if it exists, otherwise use the viewValue (label property if viewValue is object) */
             selected = angular.isDefined(index) ? typeahead.$scope.$matches[index].label : controller.$viewValue;
             if (angular.isObject(selected)) selected = selected.label;
           }
+          if (!angular.isString(selected)) return;
           element.val(selected.replace(/<(?:.|\n)*?>/gm, '').trim());
         };
 
