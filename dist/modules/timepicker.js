@@ -29,7 +29,9 @@ angular.module('mgcrea.ngStrap.timepicker', [
       length: 5,
       hourStep: 1,
       minuteStep: 5,
-      arrows: 'pager'
+      arrows: 'pager',
+      iconUp: 'glyphicon glyphicon-chevron-up',
+      iconDown: 'glyphicon glyphicon-chevron-down'
     };
   this.$get = [
     '$window',
@@ -62,6 +64,8 @@ angular.module('mgcrea.ngStrap.timepicker', [
           };
         var format = $locale.DATETIME_FORMATS[options.timeFormat] || options.timeFormat;
         var formats = /(h+)[:]?(m+)[ ]?(a?)/i.exec(format).slice(1);
+        scope.$iconUp = options.iconUp;
+        scope.$iconDown = options.iconDown;
         // Scope methods
         scope.$select = function (date, index) {
           $timepicker.select(date, index);

@@ -25,7 +25,8 @@ angular.module('mgcrea.ngStrap.select', [
       caretHtml: '&nbsp;<span class="caret"></span>',
       placeholder: 'Choose among the following...',
       maxLength: 3,
-      maxLengthHtml: 'selected'
+      maxLengthHtml: 'selected',
+      iconCheckmark: 'glyphicon glyphicon-ok'
     };
   this.$get = [
     '$window',
@@ -45,6 +46,7 @@ angular.module('mgcrea.ngStrap.select', [
         scope.$matches = [];
         scope.$activeIndex = 0;
         scope.$isMultiple = options.multiple;
+        scope.$iconCheckmark = options.iconCheckmark;
         scope.$activate = function (index) {
           scope.$$postDigest(function () {
             $select.activate(index);
