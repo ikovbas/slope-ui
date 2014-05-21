@@ -143,13 +143,10 @@ angular.module('mgcrea.ngStrap.select', ['mgcrea.ngStrap.tooltip', 'mgcrea.ngStr
         };
 
         $select.$onMouseDown = function(evt) {
-          // Prevent blur on mousedown on .dropdown-menu
-          evt.preventDefault();
-          evt.stopPropagation();
-          // Emulate click for mobile devices
-          if(isTouch) {
-            var targetEl = angular.element(evt.target);
-            targetEl.triggerHandler('click');
+          if(!isTouch) {
+            // Prevent blur on mousedown on .dropdown-menu
+            evt.preventDefault();
+            evt.stopPropagation();
           }
         };
 
