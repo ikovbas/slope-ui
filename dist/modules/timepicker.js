@@ -1,6 +1,6 @@
 /**
  * angular-strap
- * @version v2.0.2 - 2014-05-20
+ * @version v2.0.2 - 2014-05-21
  * @link http://mgcrea.github.io/angular-strap
  * @author Olivier Louvignes (olivier@mg-crea.com)
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -181,7 +181,6 @@ angular.module('mgcrea.ngStrap.timepicker', [
             newDate.setMinutes(minutes - parseInt(options.minuteStep, 10) * value);
           }
           $timepicker.select(newDate, index, true);
-          parentScope.$digest();
         };
         $timepicker.$moveIndex = function (value, index) {
           var targetDate;

@@ -1,6 +1,6 @@
 /**
  * angular-strap
- * @version v2.0.2 - 2014-05-20
+ * @version v2.0.2 - 2014-05-21
  * @link http://mgcrea.github.io/angular-strap
  * @author Olivier Louvignes (olivier@mg-crea.com)
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -227,7 +227,8 @@ angular.module('mgcrea.ngStrap.alert', ['mgcrea.ngStrap.modal']).provider('$aler
       keyboard: true,
       show: true,
       duration: false,
-      type: false
+      type: false,
+      dismissable: true
     };
   this.$get = [
     '$modal',
@@ -238,7 +239,8 @@ angular.module('mgcrea.ngStrap.alert', ['mgcrea.ngStrap.modal']).provider('$aler
         // Common vars
         var options = angular.extend({}, defaults, config);
         $alert = $modal(options);
-        // Support scope as string options [/*title, content, */type]
+        // Support scope as string options [/*title, content, */ type, dismissable]
+        $alert.$scope.dismissable = !!options.dismissable;
         if (options.type) {
           $alert.$scope.type = options.type;
         }
@@ -281,7 +283,8 @@ angular.module('mgcrea.ngStrap.alert', ['mgcrea.ngStrap.modal']).provider('$aler
           'html',
           'container',
           'animation',
-          'duration'
+          'duration',
+          'dismissable'
         ], function (key) {
           if (angular.isDefined(attr[key]))
             options[key] = attr[key];
@@ -2824,7 +2827,6 @@ angular.module('mgcrea.ngStrap.timepicker', [
             newDate.setMinutes(minutes - parseInt(options.minuteStep, 10) * value);
           }
           $timepicker.select(newDate, index, true);
-          parentScope.$digest();
         };
         $timepicker.$moveIndex = function (value, index) {
           var targetDate;
@@ -3133,10 +3135,9 @@ angular.module('mgcrea.ngStrap.tooltip', ['mgcrea.ngStrap.helpers.dimensions']).
     '$templateCache',
     '$http',
     '$animate',
-    '$timeout',
     'dimensions',
     '$$rAF',
-    function ($window, $rootScope, $compile, $q, $templateCache, $http, $animate, $timeout, dimensions, $$rAF) {
+    function ($window, $rootScope, $compile, $q, $templateCache, $http, $animate, dimensions, $$rAF) {
       var trim = String.prototype.trim;
       var isTouch = 'createTouch' in $window.document;
       var htmlReplaceRegExp = /ng-bind="/gi;
@@ -3252,6 +3253,8 @@ angular.module('mgcrea.ngStrap.tooltip', ['mgcrea.ngStrap.helpers.dimensions']).
             tipElement.remove();
             tipElement = null;
           }
+          //cancel pending callbacks
+          clearTimeout(timeout);
           // Destroy scope
           scope.$destroy();
         };
@@ -3278,8 +3281,8 @@ angular.module('mgcrea.ngStrap.tooltip', ['mgcrea.ngStrap.helpers.dimensions']).
           });
           // Set the initial positioning.
           tipElement.css({
-            top: '0px',
-            left: '0px',
+            top: '-9999px',
+            left: '-9999px',
             display: 'block'
           }).addClass(options.placement);
           // Options: animation
