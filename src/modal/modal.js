@@ -213,7 +213,11 @@ angular.module('mgcrea.ngStrap.modal', ['mgcrea.ngStrap.helpers.dimensions'])
 
         $modal.$onKeyDown = function(evt) {
 
-          evt.which === 8 && angular.element(document.activeElement).hasClass('modal') && $modal.hide();
+          if (evt.which === 8 && angular.element(document.activeElement).hasClass('modal')) {
+            evt.preventDefault();
+            evt.stopPropagation();
+            $modal.hide();
+          }
 
         };
 
