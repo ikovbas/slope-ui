@@ -1,6 +1,6 @@
 /**
  * angular-strap
- * @version v2.0.2 - 2014-05-21
+ * @version v2.0.2 - 2014-05-30
  * @link http://mgcrea.github.io/angular-strap
  * @author Olivier Louvignes (olivier@mg-crea.com)
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -38,6 +38,7 @@ angular.module('mgcrea.ngStrap.typeahead', [
         $typeahead = $tooltip(element, options);
         var parentScope = config.scope;
         var scope = $typeahead.$scope;
+        scope.$selectedValue = null;
         scope.$resetMatches = function () {
           scope.$matches = [];
           scope.$activeIndex = 0;
@@ -67,14 +68,14 @@ angular.module('mgcrea.ngStrap.typeahead', [
           scope.$activeIndex = index;
         };
         $typeahead.select = function (index) {
-          var value = scope.$matches[index].value;
-          controller.$setViewValue(value);
+          scope.$selectedValue = scope.$matches[index].value;
+          controller.$setViewValue(scope.$selectedValue);
           controller.$render();
           scope.$resetMatches();
           if (parentScope)
             parentScope.$digest();
           // Emit event
-          scope.$emit('$typeahead.select', value, index);
+          scope.$emit('$typeahead.select', scope.$selectedValue, index);
           if (options.onSelect) {
             var onSelectFn = $parse(options.onSelect);
             if (typeof onSelectFn === 'function')
@@ -201,7 +202,7 @@ angular.module('mgcrea.ngStrap.typeahead', [
             if (values.length > limit)
               values = values.slice(0, limit);
             // Do not re-queue an update if a correct value has been selected
-            if (values.length === 1 && values[0].value === newValue)
+            if (newValue === typeahead.$scope.$selectedValue)
               return;
             typeahead.update(values);
             // Queue a new rendering that will leverage collection loading
@@ -226,7 +227,8 @@ angular.module('mgcrea.ngStrap.typeahead', [
           }
           if (!angular.isString(selected))
             return;
-          element.val(selected.replace(/<(?:.|\n)*?>/gm, '').trim());
+          controller.$viewValue = selected.replace(/<(?:.|\n)*?>/gm, '').trim();
+          element.val(controller.$viewValue);
         };
         // Garbage collection
         scope.$on('$destroy', function () {
