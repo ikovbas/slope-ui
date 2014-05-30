@@ -160,6 +160,7 @@ angular.module('mgcrea.ngStrap.modal', ['mgcrea.ngStrap.helpers.dimensions']).pr
           }
           if (options.keyboard) {
             modalElement.on('keyup', $modal.$onKeyUp);
+            modalElement.on('keydown', $modal.$onKeyDown);
           }
         };
         $modal.hide = function () {
@@ -184,6 +185,7 @@ angular.module('mgcrea.ngStrap.modal', ['mgcrea.ngStrap.helpers.dimensions']).pr
           }
           if (options.keyboard) {
             modalElement.off('keyup', $modal.$onKeyUp);
+            modalElement.off('keydown', $modal.$onKeyDown);
           }
         };
         $modal.toggle = function () {
@@ -195,6 +197,9 @@ angular.module('mgcrea.ngStrap.modal', ['mgcrea.ngStrap.helpers.dimensions']).pr
         // Protected methods
         $modal.$onKeyUp = function (evt) {
           evt.which === 27 && $modal.hide();
+        };
+        $modal.$onKeyDown = function (evt) {
+          evt.which === 8 && angular.element(document.activeElement).hasClass('modal') && $modal.hide();
         };
         // Private methods
         function hideOnBackdropClick(evt) {
