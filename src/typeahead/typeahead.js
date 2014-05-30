@@ -112,19 +112,21 @@ angular.module('mgcrea.ngStrap.typeahead', ['mgcrea.ngStrap.tooltip', 'mgcrea.ng
         };
 
         $typeahead.$onKeyDown = function(evt) {
-          if (!/(38|40|13)/.test(evt.keyCode)) return;
-          evt.preventDefault();
-          evt.stopPropagation();
+          if (!/(38|40|13|9)/.test(evt.keyCode)) return;
 
           // Select with enter
-          if(evt.keyCode === 13 && scope.$matches.length) {
+          if((evt.keyCode === 13 || evt.keyCode === 9) && scope.$matches.length) {
             $typeahead.select(scope.$activeIndex);
           }
 
           // Navigate with keyboard
-          else if(evt.keyCode === 38 && scope.$activeIndex > 0) scope.$activeIndex--;
-          else if(evt.keyCode === 40 && scope.$activeIndex < scope.$matches.length - 1) scope.$activeIndex++;
-          else if(angular.isUndefined(scope.$activeIndex)) scope.$activeIndex = 0;
+          else {
+            evt.preventDefault();
+            evt.stopPropagation();
+            if(evt.keyCode === 38 && scope.$activeIndex > 0) scope.$activeIndex--;
+            else if(evt.keyCode === 40 && scope.$activeIndex < scope.$matches.length - 1) scope.$activeIndex++;
+            else if(angular.isUndefined(scope.$activeIndex)) scope.$activeIndex = 0;
+          }
           scope.$digest();
         };
 
