@@ -34,6 +34,7 @@ angular.module('mgcrea.ngStrap.typeahead', ['mgcrea.ngStrap.tooltip', 'mgcrea.ng
         var parentScope = config.scope;
         var scope = $typeahead.$scope;
 
+        scope.$selectedValue = null;
         scope.$resetMatches = function(){
           scope.$matches = [];
           scope.$activeIndex = 0;
@@ -70,13 +71,13 @@ angular.module('mgcrea.ngStrap.typeahead', ['mgcrea.ngStrap.tooltip', 'mgcrea.ng
         };
 
         $typeahead.select = function(index) {
-          var value = scope.$matches[index].value;
-          controller.$setViewValue(value);
+          scope.$selectedValue = scope.$matches[index].value;
+          controller.$setViewValue(scope.$selectedValue);
           controller.$render();
           scope.$resetMatches();
           if(parentScope) parentScope.$digest();
           // Emit event
-          scope.$emit('$typeahead.select', value, index);
+          scope.$emit('$typeahead.select', scope.$selectedValue, index);
           if(options.onSelect) {
             var onSelectFn = $parse(options.onSelect);
             if(typeof onSelectFn === 'function') onSelectFn(scope);
@@ -194,7 +195,7 @@ angular.module('mgcrea.ngStrap.typeahead', ['mgcrea.ngStrap.tooltip', 'mgcrea.ng
           .then(function(values) {
             if(values.length > limit) values = values.slice(0, limit);
             // Do not re-queue an update if a correct value has been selected
-            if(values.length === 1 && values[0].value === newValue) return;
+            if (newValue === typeahead.$scope.$selectedValue) return;
             typeahead.update(values);
             // Queue a new rendering that will leverage collection loading
             controller.$render();
@@ -217,7 +218,8 @@ angular.module('mgcrea.ngStrap.typeahead', ['mgcrea.ngStrap.tooltip', 'mgcrea.ng
             if (angular.isObject(selected)) selected = selected.label;
           }
           if (!angular.isString(selected)) return;
-          element.val(selected.replace(/<(?:.|\n)*?>/gm, '').trim());
+          controller.$viewValue = selected.replace(/<(?:.|\n)*?>/gm, '').trim();
+          element.val(controller.$viewValue);
         };
 
         // Garbage collection
