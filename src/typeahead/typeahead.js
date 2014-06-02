@@ -112,11 +112,11 @@ angular.module('mgcrea.ngStrap.typeahead', ['mgcrea.ngStrap.tooltip', 'mgcrea.ng
         };
 
         $typeahead.$onKeyDown = function(evt) {
-          if (!/(38|40|13|9)/.test(evt.keyCode)) return;
+          if (!/(^38$|^40$|^13$|^9$)/.test(evt.keyCode)) return;
 
           // Select with enter
-          if((evt.keyCode === 13 || evt.keyCode === 9) && scope.$matches.length) {
-            $typeahead.select(scope.$activeIndex);
+          if (evt.keyCode === 13 || evt.keyCode === 9) {
+            scope.$matches.length && $typeahead.select(scope.$activeIndex);
           }
 
           // Navigate with keyboard
