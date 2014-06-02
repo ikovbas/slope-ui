@@ -1,6 +1,6 @@
 /**
  * angular-strap
- * @version v2.0.2 - 2014-06-02
+ * @version v2.0.3 - 2014-05-30
  * @link http://mgcrea.github.io/angular-strap
  * @author Olivier Louvignes (olivier@mg-crea.com)
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -28,8 +28,7 @@ angular.module('mgcrea.ngStrap.typeahead', [
     '$window',
     '$rootScope',
     '$tooltip',
-    '$parse',
-    function ($window, $rootScope, $tooltip, $parse) {
+    function ($window, $rootScope, $tooltip) {
       var bodyEl = angular.element($window.document.body);
       function TypeaheadFactory(element, controller, config) {
         var $typeahead = {};
@@ -38,7 +37,6 @@ angular.module('mgcrea.ngStrap.typeahead', [
         $typeahead = $tooltip(element, options);
         var parentScope = config.scope;
         var scope = $typeahead.$scope;
-        scope.$selectedValue = null;
         scope.$resetMatches = function () {
           scope.$matches = [];
           scope.$activeIndex = 0;
@@ -68,19 +66,14 @@ angular.module('mgcrea.ngStrap.typeahead', [
           scope.$activeIndex = index;
         };
         $typeahead.select = function (index) {
-          scope.$selectedValue = scope.$matches[index].value;
-          controller.$setViewValue(scope.$selectedValue);
+          var value = scope.$matches[index].value;
+          controller.$setViewValue(value);
           controller.$render();
           scope.$resetMatches();
           if (parentScope)
             parentScope.$digest();
           // Emit event
-          scope.$emit('$typeahead.select', scope.$selectedValue, index);
-          if (options.onSelect) {
-            var onSelectFn = $parse(options.onSelect);
-            if (typeof onSelectFn === 'function')
-              onSelectFn(scope);
-          }
+          scope.$emit('$typeahead.select', value, index);
         };
         // Protected methods
         $typeahead.$isVisible = function () {
@@ -88,8 +81,7 @@ angular.module('mgcrea.ngStrap.typeahead', [
             return !!scope.$matches.length;
           }
           // minLength support
-          var isMinLength = angular.isString(controller.$viewValue) && controller.$viewValue.length >= options.minLength;
-          return scope.$matches.length && (isMinLength || parseInt(options.minLength) === 0);
+          return scope.$matches.length && angular.isString(controller.$viewValue) && controller.$viewValue.length >= options.minLength;
         };
         $typeahead.$getIndex = function (value) {
           var l = scope.$matches.length, i = l;
@@ -109,22 +101,20 @@ angular.module('mgcrea.ngStrap.typeahead', [
           evt.stopPropagation();
         };
         $typeahead.$onKeyDown = function (evt) {
-          if (!/(^38$|^40$|^13$|^9$)/.test(evt.keyCode))
+          if (!/(38|40|13)/.test(evt.keyCode))
             return;
+          evt.preventDefault();
+          evt.stopPropagation();
           // Select with enter
-          if (evt.keyCode === 13 || evt.keyCode === 9) {
-            scope.$matches.length && $typeahead.select(scope.$activeIndex);
+          if (evt.keyCode === 13 && scope.$matches.length) {
+            $typeahead.select(scope.$activeIndex);
           }  // Navigate with keyboard
-          else {
-            evt.preventDefault();
-            evt.stopPropagation();
-            if (evt.keyCode === 38 && scope.$activeIndex > 0)
-              scope.$activeIndex--;
-            else if (evt.keyCode === 40 && scope.$activeIndex < scope.$matches.length - 1)
-              scope.$activeIndex++;
-            else if (angular.isUndefined(scope.$activeIndex))
-              scope.$activeIndex = 0;
-          }
+          else if (evt.keyCode === 38 && scope.$activeIndex > 0)
+            scope.$activeIndex--;
+          else if (evt.keyCode === 40 && scope.$activeIndex < scope.$matches.length - 1)
+            scope.$activeIndex++;
+          else if (angular.isUndefined(scope.$activeIndex))
+            scope.$activeIndex = 0;
           scope.$digest();
         };
         // Overrides
@@ -177,9 +167,7 @@ angular.module('mgcrea.ngStrap.typeahead', [
           'template',
           'filter',
           'limit',
-          'minLength',
-          'onSelect',
-          'inputLabel'
+          'minLength'
         ], function (key) {
           if (angular.isDefined(attr[key]))
             options[key] = attr[key];
@@ -204,7 +192,7 @@ angular.module('mgcrea.ngStrap.typeahead', [
             if (values.length > limit)
               values = values.slice(0, limit);
             // Do not re-queue an update if a correct value has been selected
-            if (newValue === typeahead.$scope.$selectedValue)
+            if (values.length === 1 && values[0].value === newValue)
               return;
             typeahead.update(values);
             // Queue a new rendering that will leverage collection loading
@@ -217,20 +205,9 @@ angular.module('mgcrea.ngStrap.typeahead', [
           if (controller.$isEmpty(controller.$viewValue))
             return element.val('');
           var index = typeahead.$getIndex(controller.$modelValue);
-          var selected = '';
-          if (options.inputLabel) {
-            var getViewValue = $parse(options.inputLabel);
-            selected = getViewValue(scope);
-          } else {
-            /* Get the label from the ng-options parser if it exists, otherwise use the viewValue (label property if viewValue is object) */
-            selected = angular.isNumber(index) ? typeahead.$scope.$matches[index].label : controller.$viewValue;
-            if (angular.isObject(selected))
-              selected = selected.label;
-          }
-          if (!angular.isString(selected))
-            return;
-          controller.$viewValue = selected.replace(/<(?:.|\n)*?>/gm, '').trim();
-          element.val(controller.$viewValue);
+          var selected = angular.isDefined(index) ? typeahead.$scope.$matches[index].label : controller.$viewValue;
+          selected = angular.isObject(selected) ? selected.label : selected;
+          element.val(selected.replace(/<(?:.|\n)*?>/gm, '').trim());
         };
         // Garbage collection
         scope.$on('$destroy', function () {

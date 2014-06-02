@@ -1,6 +1,6 @@
 /**
  * angular-strap
- * @version v2.0.2 - 2014-06-02
+ * @version v2.0.3 - 2014-05-30
  * @link http://mgcrea.github.io/angular-strap
  * @author Olivier Louvignes (olivier@mg-crea.com)
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -122,7 +122,7 @@ angular.module('mgcrea.ngStrap.helpers.dimensions', []).factory('dimensions', [
       return value;
     };
     /**
-     * Provides equivalent of jQuery's height function
+     * Provides equivalent of jQuery's width function
      * @required-by bootstrap-affix
      * @url http://api.jquery.com/width/
      * @param element

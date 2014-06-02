@@ -1,6 +1,6 @@
 /**
  * angular-strap
- * @version v2.0.2 - 2014-06-02
+ * @version v2.0.3 - 2014-05-30
  * @link http://mgcrea.github.io/angular-strap
  * @author Olivier Louvignes (olivier@mg-crea.com)
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -142,7 +142,7 @@ angular.module('mgcrea.ngStrap.modal', ['mgcrea.ngStrap.helpers.dimensions']).pr
             scope.$emit(options.prefixEvent + '.show', $modal);
           });
           scope.$isShown = true;
-          scope.$$phase || scope.$root.$$phase || scope.$digest();
+          scope.$$phase || scope.$root && scope.$root.$$phase || scope.$digest();
           // Focus once the enter-animation has started
           // Weird PhantomJS bug hack
           var el = modalElement[0];
@@ -160,7 +160,6 @@ angular.module('mgcrea.ngStrap.modal', ['mgcrea.ngStrap.helpers.dimensions']).pr
           }
           if (options.keyboard) {
             modalElement.on('keyup', $modal.$onKeyUp);
-            modalElement.on('keydown', $modal.$onKeyDown);
           }
         };
         $modal.hide = function () {
@@ -177,7 +176,7 @@ angular.module('mgcrea.ngStrap.modal', ['mgcrea.ngStrap.helpers.dimensions']).pr
             });
           }
           scope.$isShown = false;
-          scope.$$phase || scope.$root.$$phase || scope.$digest();
+          scope.$$phase || scope.$root && scope.$root.$$phase || scope.$digest();
           // Unbind events
           if (options.backdrop) {
             modalElement.off('click', hideOnBackdropClick);
@@ -185,7 +184,6 @@ angular.module('mgcrea.ngStrap.modal', ['mgcrea.ngStrap.helpers.dimensions']).pr
           }
           if (options.keyboard) {
             modalElement.off('keyup', $modal.$onKeyUp);
-            modalElement.off('keydown', $modal.$onKeyDown);
           }
         };
         $modal.toggle = function () {
@@ -197,13 +195,6 @@ angular.module('mgcrea.ngStrap.modal', ['mgcrea.ngStrap.helpers.dimensions']).pr
         // Protected methods
         $modal.$onKeyUp = function (evt) {
           evt.which === 27 && $modal.hide();
-        };
-        $modal.$onKeyDown = function (evt) {
-          if (evt.which === 8 && angular.element(document.activeElement).hasClass('modal')) {
-            evt.preventDefault();
-            evt.stopPropagation();
-            $modal.hide();
-          }
         };
         // Private methods
         function hideOnBackdropClick(evt) {

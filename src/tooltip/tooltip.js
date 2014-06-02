@@ -9,6 +9,7 @@ angular.module('mgcrea.ngStrap.tooltip', ['mgcrea.ngStrap.helpers.dimensions'])
       prefixClass: 'tooltip',
       prefixEvent: 'tooltip',
       container: false,
+      target: false,
       placement: 'top',
       template: 'tooltip/tooltip.tpl.html',
       contentTemplate: false,
@@ -125,6 +126,11 @@ angular.module('mgcrea.ngStrap.tooltip', ['mgcrea.ngStrap.helpers.dimensions'])
             }
           });
 
+          // Options: target
+          if(options.target) {
+            options.target = angular.isElement(options.target) ? options.target : findElement(options.target)[0];
+          }
+
           // Options: show
           if(options.show) {
             scope.$$postDigest(function() {
@@ -155,7 +161,7 @@ angular.module('mgcrea.ngStrap.tooltip', ['mgcrea.ngStrap.helpers.dimensions'])
             tipElement = null;
           }
 
-          //cancel pending callbacks
+          // Cancel pending callbacks
           clearTimeout(timeout);
 
           // Destroy scope
@@ -200,7 +206,7 @@ angular.module('mgcrea.ngStrap.tooltip', ['mgcrea.ngStrap.helpers.dimensions'])
             scope.$emit(options.prefixEvent + '.show', $tooltip);
           });
           $tooltip.$isShown = scope.$isShown = true;
-          scope.$$phase || scope.$root.$$phase || scope.$digest();
+          scope.$$phase || (scope.$root && scope.$root.$$phase) || scope.$digest();
           $$rAF($tooltip.$applyPlacement); // var a = bodyEl.offsetWidth + 1; ?
 
           // Bind events
@@ -240,7 +246,7 @@ angular.module('mgcrea.ngStrap.tooltip', ['mgcrea.ngStrap.helpers.dimensions'])
           });
 
           $tooltip.$isShown = scope.$isShown = false;
-          scope.$$phase || scope.$root.$$phase || scope.$digest();
+          scope.$$phase || (scope.$root && scope.$root.$$phase) || scope.$digest();
 
           // Unbind events
           if(options.keyboard && tipElement !== null) {
@@ -303,9 +309,9 @@ angular.module('mgcrea.ngStrap.tooltip', ['mgcrea.ngStrap.helpers.dimensions'])
 
         function getPosition() {
           if(options.container === 'body') {
-            return dimensions.offset(element[0]);
+            return dimensions.offset(options.target || element[0]);
           } else {
-            return dimensions.position(element[0]);
+            return dimensions.position(options.target || element[0]);
           }
         }
 
@@ -402,7 +408,7 @@ angular.module('mgcrea.ngStrap.tooltip', ['mgcrea.ngStrap.helpers.dimensions'])
 
         // Directive options
         var options = {scope: scope};
-        angular.forEach(['template', 'contentTemplate', 'placement', 'container', 'delay', 'trigger', 'keyboard', 'html', 'animation', 'type'], function(key) {
+        angular.forEach(['template', 'contentTemplate', 'placement', 'container', 'target', 'delay', 'trigger', 'keyboard', 'html', 'animation', 'type'], function(key) {
           if(angular.isDefined(attr[key])) options[key] = attr[key];
         });
 

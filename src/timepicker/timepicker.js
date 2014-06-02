@@ -18,6 +18,7 @@ angular.module('mgcrea.ngStrap.timepicker', ['mgcrea.ngStrap.helpers.dateParser'
       useNative: true,
       timeType: 'date',
       timeFormat: 'shortTime',
+      modelTimeFormat: null,
       autoclose: false,
       minTime: -Infinity,
       maxTime: +Infinity,
@@ -50,7 +51,7 @@ angular.module('mgcrea.ngStrap.timepicker', ['mgcrea.ngStrap.helpers.dateParser'
         var viewDate = {hour: startDate.getHours(), meridian: startDate.getHours() < 12, minute: startDate.getMinutes(), second: startDate.getSeconds(), millisecond: startDate.getMilliseconds()};
 
         var format = $locale.DATETIME_FORMATS[options.timeFormat] || options.timeFormat;
-        var formats = /(h+)[:]?(m+)[ ]?(a?)/i.exec(format).slice(1);
+        var formats = /(h+)([:\.])?(m+)[ ]?(a?)/i.exec(format).slice(1);
         scope.$iconUp = options.iconUp;
         scope.$iconDown = options.iconDown;
 
@@ -112,7 +113,7 @@ angular.module('mgcrea.ngStrap.timepicker', ['mgcrea.ngStrap.helpers.dateParser'
           var minutes = [], minute;
           for(i = 0; i < options.length; i++) {
             minute = new Date(1970, 0, 1, 0, viewDate.minute - (midIndex - i) * options.minuteStep);
-            minutes.push({date: minute, label: dateFilter(minute, formats[1]), selected: $timepicker.$date && $timepicker.$isSelected(minute, 1), disabled: $timepicker.$isDisabled(minute, 1)});
+            minutes.push({date: minute, label: dateFilter(minute, formats[2]), selected: $timepicker.$date && $timepicker.$isSelected(minute, 1), disabled: $timepicker.$isDisabled(minute, 1)});
           }
 
           var rows = [];
@@ -120,8 +121,9 @@ angular.module('mgcrea.ngStrap.timepicker', ['mgcrea.ngStrap.helpers.dateParser'
             rows.push([hours[i], minutes[i]]);
           }
           scope.rows = rows;
-          scope.showAM = !!formats[2];
+          scope.showAM = !!formats[3];
           scope.isAM = ($timepicker.$date || hours[midIndex].date).getHours() < 12;
+          scope.timeSeparator = formats[1];
           $timepicker.$isBuilt = true;
         };
 
@@ -205,7 +207,7 @@ angular.module('mgcrea.ngStrap.timepicker', ['mgcrea.ngStrap.helpers.dateParser'
           var hours = newDate.getHours(), hoursLength = dateFilter(newDate, 'h').length;
           var minutes = newDate.getMinutes(), minutesLength = dateFilter(newDate, 'mm').length;
           var lateralMove = /(37|39)/.test(evt.keyCode);
-          var count = 2 + !!formats[2] * 1;
+          var count = 2 + !!formats[3] * 1;
 
           // Navigate indexes (left, right)
           if (lateralMove) {
@@ -322,7 +324,7 @@ angular.module('mgcrea.ngStrap.timepicker', ['mgcrea.ngStrap.helpers.dateParser'
 
         // Directive options
         var options = {scope: scope, controller: controller};
-        angular.forEach(['placement', 'container', 'delay', 'trigger', 'keyboard', 'html', 'animation', 'template', 'autoclose', 'timeType', 'timeFormat', 'useNative', 'hourStep', 'minuteStep', 'length', 'arrows'], function(key) {
+        angular.forEach(['placement', 'container', 'delay', 'trigger', 'keyboard', 'html', 'animation', 'template', 'autoclose', 'timeType', 'timeFormat', 'modelTimeFormat', 'useNative', 'hourStep', 'minuteStep', 'length', 'arrows'], function(key) {
           if(angular.isDefined(attr[key])) options[key] = attr[key];
         });
 
@@ -373,7 +375,7 @@ angular.module('mgcrea.ngStrap.timepicker', ['mgcrea.ngStrap.helpers.dateParser'
             if(isValid) controller.$dateValue = parsedTime;
           }
           if(options.timeType === 'string') {
-            return dateFilter(viewValue, options.timeFormat);
+            return dateFilter(parsedTime, options.modelTimeFormat || options.timeFormat);
           } else if(options.timeType === 'number') {
             return controller.$dateValue.getTime();
           } else if(options.timeType === 'iso') {
@@ -392,7 +394,7 @@ angular.module('mgcrea.ngStrap.timepicker', ['mgcrea.ngStrap.helpers.dateParser'
           } else if(angular.isDate(modelValue)) {
             date = modelValue;
           } else if(options.timeType === 'string') {
-            date = dateParser.parse(modelValue);
+            date = dateParser.parse(modelValue, null, options.modelTimeFormat);
           } else {
             date = new Date(modelValue);
           }
