@@ -1,6 +1,6 @@
 /**
  * angular-strap
- * @version v2.0.3 - 2014-05-30
+ * @version v2.0.3 - 2014-06-02
  * @link http://mgcrea.github.io/angular-strap
  * @author Olivier Louvignes (olivier@mg-crea.com)
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -136,13 +136,10 @@ angular.module('mgcrea.ngStrap.select', [
           return i;
         };
         $select.$onMouseDown = function (evt) {
-          // Prevent blur on mousedown on .dropdown-menu
-          evt.preventDefault();
-          evt.stopPropagation();
-          // Emulate click for mobile devices
-          if (isTouch) {
-            var targetEl = angular.element(evt.target);
-            targetEl.triggerHandler('click');
+          if (!isTouch) {
+            // Prevent blur on mousedown on .dropdown-menu
+            evt.preventDefault();
+            evt.stopPropagation();
           }
         };
         $select.$onKeyDown = function (evt) {

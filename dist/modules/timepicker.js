@@ -1,6 +1,6 @@
 /**
  * angular-strap
- * @version v2.0.3 - 2014-05-30
+ * @version v2.0.3 - 2014-06-02
  * @link http://mgcrea.github.io/angular-strap
  * @author Olivier Louvignes (olivier@mg-crea.com)
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -30,6 +30,7 @@ angular.module('mgcrea.ngStrap.timepicker', [
       length: 5,
       hourStep: 1,
       minuteStep: 5,
+      arrows: 'pager',
       iconUp: 'glyphicon glyphicon-chevron-up',
       iconDown: 'glyphicon glyphicon-chevron-down'
     };
@@ -168,6 +169,24 @@ angular.module('mgcrea.ngStrap.timepicker', [
             selectedTime = date.getTime() + viewDate.hour * 3600000;
           }
           return selectedTime < options.minTime * 1 || selectedTime > options.maxTime * 1;
+        };
+        scope.$arrowAction = function (value, index) {
+          if (options.arrows === 'pager') {
+            $timepicker.$moveIndex(value, index);
+          } else if (options.arrows === 'picker') {
+            $timepicker.$setTimeByStep(value, index);
+          }
+        };
+        $timepicker.$setTimeByStep = function (value, index) {
+          var newDate = new Date($timepicker.$date);
+          var hours = newDate.getHours(), hoursLength = dateFilter(newDate, 'h').length;
+          var minutes = newDate.getMinutes(), minutesLength = dateFilter(newDate, 'mm').length;
+          if (index === 0) {
+            newDate.setHours(hours - parseInt(options.hourStep, 10) * value);
+          } else {
+            newDate.setMinutes(minutes - parseInt(options.minuteStep, 10) * value);
+          }
+          $timepicker.select(newDate, index, true);
         };
         $timepicker.$moveIndex = function (value, index) {
           var targetDate;
@@ -351,7 +370,8 @@ angular.module('mgcrea.ngStrap.timepicker', [
           'useNative',
           'hourStep',
           'minuteStep',
-          'length'
+          'length',
+          'arrows'
         ], function (key) {
           if (angular.isDefined(attr[key]))
             options[key] = attr[key];
