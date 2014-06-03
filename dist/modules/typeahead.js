@@ -1,6 +1,6 @@
 /**
  * angular-strap
- * @version v2.0.3 - 2014-06-02
+ * @version v2.0.3 - 2014-06-03
  * @link http://mgcrea.github.io/angular-strap
  * @author Olivier Louvignes (olivier@mg-crea.com)
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -116,8 +116,6 @@ angular.module('mgcrea.ngStrap.typeahead', [
             scope.$matches.length && $typeahead.select(scope.$activeIndex);
           }  // Navigate with keyboard
           else {
-            evt.preventDefault();
-            evt.stopPropagation();
             if (evt.keyCode === 38 && scope.$activeIndex > 0)
               scope.$activeIndex--;
             else if (evt.keyCode === 40 && scope.$activeIndex < scope.$matches.length - 1)
@@ -125,6 +123,8 @@ angular.module('mgcrea.ngStrap.typeahead', [
             else if (angular.isUndefined(scope.$activeIndex))
               scope.$activeIndex = 0;
           }
+          evt.keyCode !== 9 && evt.preventDefault();
+          evt.keyCode !== 9 && evt.stopPropagation();
           scope.$digest();
         };
         // Overrides
