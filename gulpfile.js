@@ -192,43 +192,45 @@ var ngmin = require('gulp-ngmin');
 var createModuleName = function(src) { return 'mgcrea.ngStrap.' + src.split(path.sep)[0]; };
 gulp.task('templates:dist', function() {
 
-  var combined = combine(
-
+  var combinedUnified = combine(
     // Build unified package
-    gulp.src(src.templates, {cwd: src.cwd})
-      .pipe(htmlmin({removeComments: true, collapseWhitespace: true}))
-      .pipe(ngtemplate({module: createModuleName}))
-      .pipe(ngmin())
-      .pipe(concat(pkg.name + '.tpl.js', {process: function(src) { return '// Source: ' + path.basename(this.path) + '\n' + (src.trim() + '\n').replace(/(^|\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1'); }}))
-      .pipe(concat.header('(function(window, document, undefined) {\n\'use strict\';\n\n'))
-      .pipe(concat.footer('\n\n})(window, document);\n'))
-      .pipe(concat.header(banner))
-      .pipe(gulp.dest(src.dist))
-      .pipe(rename(function(path) { path.extname = '.min.js'; }))
-      .pipe(uglify())
-      .pipe(concat.header(banner))
-      .pipe(gulp.dest(src.dist)),
+    gulp.src(src.templates, {cwd: src.cwd}),
+    htmlmin({removeComments: true, collapseWhitespace: true}),
+    ngtemplate({module: createModuleName}),
+    ngmin(),
+    concat(pkg.name + '.tpl.js', {process: function(src) { return '// Source: ' + path.basename(this.path) + '\n' + (src.trim() + '\n').replace(/(^|\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1'); }}),
+    concat.header('(function(window, document, undefined) {\n\'use strict\';\n\n'),
+    concat.footer('\n\n})(window, document);\n'),
+    concat.header(banner),
+    gulp.dest(src.dist),
+    rename(function(path) { path.extname = '.min.js'; }),
+    uglify(),
+    concat.header(banner),
+    gulp.dest(src.dist)
+  )
 
+  var combinedModules = combine(
     // Build individual modules
-    gulp.src(src.templates, {cwd: src.cwd})
-      .pipe(htmlmin({removeComments: true, collapseWhitespace: true}))
-      .pipe(ngtemplate({module: createModuleName}))
-      .pipe(ngmin())
-      .pipe(rename(function(path){ path.dirname = ''; })) // flatten
-      .pipe(concat.header(banner))
-      .pipe(gulp.dest(path.join(src.dist, 'modules')))
-      .pipe(rename(function(path) { path.extname = '.min.js'; }))
-      .pipe(uglify())
-      .pipe(concat.header(banner))
-      .pipe(gulp.dest(path.join(src.dist, 'modules')))
+    gulp.src(src.templates, {cwd: src.cwd}),
+    htmlmin({removeComments: true, collapseWhitespace: true}),
+    ngtemplate({module: createModuleName}),
+    ngmin(),
+    rename(function(path){ path.dirname = ''; }), // flatten
+    concat.header(banner),
+    gulp.dest(path.join(src.dist, 'modules')),
+    rename(function(path) { path.extname = '.min.js'; }),
+    uglify(),
+    concat.header(banner),
+    gulp.dest(path.join(src.dist, 'modules'))
+  )
 
-  );
-
-  combined.on('error', function(err) {
+  var errorHandler = function(err) {
     gutil.log(chalk.red(util.format('Plugin error: %s', err.message)));
-  });
+  };
 
-  return combined;
+  combinedUnified.on('error', errorHandler);
+  combinedModules.on('error', errorHandler);
+  return true;
 
 });
 gulp.task('templates:pages', function() {
