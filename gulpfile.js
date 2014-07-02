@@ -116,43 +116,44 @@ var concat = require('gulp-concat-util');
 var sourcemaps = require('gulp-sourcemaps');
 gulp.task('scripts:dist', function(foo) {
 
-  var combined = combine(
-
+  var combinedUnified = combine(
     // Build unified package
-    gulp.src([src.index, src.scripts], {cwd: src.cwd})
-      .pipe(sourcemaps.init())
-      .pipe(ngmin())
-      .pipe(concat(pkg.name + '.js', {process: function(src) { return '// Source: ' + path.basename(this.path) + '\n' + (src.trim() + '\n').replace(/(^|\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1'); }}))
-      .pipe(concat.header('(function(window, document, undefined) {\n\'use strict\';\n'))
-      .pipe(concat.footer('\n})(window, document);\n'))
-      .pipe(concat.header(banner))
-      .pipe(gulp.dest(src.dist))
-      .pipe(rename(function(path) { path.extname = '.min.js'; }))
-      .pipe(uglify())
-      .pipe(concat.header(banner))
-      .pipe(sourcemaps.write('./'))
-      .pipe(gulp.dest(src.dist)),
-
+    gulp.src([src.index, src.scripts], {cwd: src.cwd}),
+    sourcemaps.init(),
+    ngmin(),
+    concat(pkg.name + '.js', {process: function(src) { return '// Source: ' + path.basename(this.path) + '\n' + (src.trim() + '\n').replace(/(^|\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1'); }}),
+    concat.header('(function(window, document, undefined) {\n\'use strict\';\n'),
+    concat.footer('\n})(window, document);\n'),
+    concat.header(banner),
+    gulp.dest(src.dist),
+    rename(function(path) { path.extname = '.min.js'; }),
+    uglify(),
+    concat.header(banner),
+    sourcemaps.write('./'),
+    gulp.dest(src.dist)
+  );
+  var combinedModules = combine(
     // Build individual modules
-    gulp.src(src.scripts, {cwd: src.cwd})
-      .pipe(sourcemaps.init())
-      .pipe(ngmin())
-      .pipe(rename(function(path){ path.dirname = ''; })) // flatten
-      .pipe(concat.header(banner))
-      .pipe(gulp.dest(path.join(src.dist, 'modules')))
-      .pipe(rename(function(path) { path.extname = '.min.js'; }))
-      .pipe(uglify())
-      .pipe(concat.header(banner))
-      .pipe(sourcemaps.write('./'))
-      .pipe(gulp.dest(path.join(src.dist, 'modules')))
-
+    gulp.src(src.scripts, {cwd: src.cwd}),
+    sourcemaps.init(),
+    ngmin(),
+    rename(function(path){ path.dirname = ''; }), // flatten
+    concat.header(banner),
+    gulp.dest(path.join(src.dist, 'modules')),
+    rename(function(path) { path.extname = '.min.js'; }),
+    uglify(),
+    concat.header(banner),
+    sourcemaps.write('./'),
+    gulp.dest(path.join(src.dist, 'modules'))
   );
 
-  combined.on('error', function(err) {
+  var errorHandler = function(err) {
     gutil.log(chalk.red(util.format('Plugin error: %s', err.message)));
-  });
+  };
+  combinedUnified.on('error',errorHandler);
+  combinedModules.on('error',errorHandler);
 
-  return combined;
+  return true;
 
 });
 gulp.task('scripts:pages', function(foo) {
