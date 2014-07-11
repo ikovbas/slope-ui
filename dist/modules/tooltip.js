@@ -1,6 +1,6 @@
 /**
  * angular-strap
- * @version v2.0.3 - 2014-07-02
+ * @version v2.0.3 - 2014-07-11
  * @link http://mgcrea.github.io/angular-strap
  * @author Olivier Louvignes (olivier@mg-crea.com)
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -381,7 +381,7 @@ angular.module('mgcrea.ngStrap.tooltip', ['mgcrea.ngStrap.helpers.dimensions']).
         });
         // Observe scope attributes for change
         angular.forEach(['title'], function (key) {
-          attr.$observe(key, function (newValue, oldValue) {
+          attr[key] && attr.$observe(key, function (newValue, oldValue) {
             scope[key] = $sce.trustAsHtml(newValue);
             angular.isDefined(oldValue) && $$rAF(function () {
               tooltip && tooltip.$applyPlacement();
