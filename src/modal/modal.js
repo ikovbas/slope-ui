@@ -218,8 +218,13 @@ angular.module('mgcrea.ngStrap.modal', ['mgcrea.ngStrap.helpers.dimensions'])
 
         $modal.$onKeyDown = function(evt) {
 
-          var allowBackspace = ['text', 'textarea'];
-          if (evt.which === 8 && allowBackspace.indexOf(document.activeElement.type) === -1) {
+          var typesBackspaceAllowed = ['text', 'textarea'];
+          var activeEl = document.activeElement;
+          var allowBackspace = typesBackspaceAllowed.indexOf(activeEl.type) !== -1;
+          if (allowBackspace && $(activeEl).is('[readonly]')) {
+            allowBackspace = false;
+          }
+          if (evt.which === 8 && !allowBackspace) {
             evt.preventDefault();
             evt.stopPropagation();
             $modal.hide();
