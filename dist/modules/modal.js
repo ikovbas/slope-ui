@@ -208,7 +208,7 @@ angular.module('mgcrea.ngStrap.modal', ['mgcrea.ngStrap.helpers.dimensions']).pr
               'text',
               'textarea'
             ];
-          if (evt.which === 8 && allowBackspace.indexOf(document.activeElement.type) !== -1) {
+          if (evt.which === 8 && allowBackspace.indexOf(document.activeElement.type) === -1) {
             evt.preventDefault();
             evt.stopPropagation();
             $modal.hide();
