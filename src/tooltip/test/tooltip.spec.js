@@ -238,6 +238,17 @@ describe('tooltip', function() {
       expect(emit).toHaveBeenCalledWith('datepicker.hide', myTooltip);
     });
 
+    it('should be invisible until it is positioned', inject(function ($$rAF) {
+      var myTooltip = $tooltip(sandboxEl, templates['default'].scope.tooltip);
+      scope.$digest();
+      myTooltip.show();
+
+      expect(bodyEl.children('.tooltip').css('visibility')).toBe('hidden');
+
+      // Positioning and visibility occurs inside the rAF callback.
+      $$rAF.flush();
+      expect(bodyEl.children('.tooltip').css('visibility')).toBe('visible');
+    }));
   });
 
   describe('options', function() {
@@ -365,6 +376,18 @@ describe('tooltip', function() {
         // expect(sandboxEl.find('.tooltip-inner').text()).toBe('foo: ' + scope.tooltip.title);
       });
 
+    });
+
+    describe('container', function() {
+      it('accepts element object', function() {
+      	var testElm = angular.element('<div></div>');
+      	sandboxEl.append(testElm);
+        var myTooltip = $tooltip(sandboxEl, angular.extend({}, templates['default'].scope.tooltip, {container: testElm}));
+        scope.$digest();
+        myTooltip.show();
+        $animate.triggerCallbacks();
+        expect(angular.element(testElm.children()[0]).hasClass('tooltip')).toBeTruthy();
+      });
     });
 
   });

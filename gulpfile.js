@@ -4,7 +4,7 @@ var gulp = require('gulp');
 var path = require('path');
 var util = require('util');
 var gutil = require('gulp-util');
-var combine = require('stream-combiner');
+var merge = require('merge-stream');
 var changed = require('gulp-changed');
 var rename = require('gulp-rename');
 var pkg = require('./package.json');
@@ -116,7 +116,7 @@ var concat = require('gulp-concat-util');
 var sourcemaps = require('gulp-sourcemaps');
 gulp.task('scripts:dist', function(foo) {
 
-  var combinedUnified = combine(
+  var merged = merge(
     // Build unified package
     gulp.src([src.index, src.scripts], {cwd: src.cwd}),
     sourcemaps.init(),
@@ -147,18 +147,18 @@ gulp.task('scripts:dist', function(foo) {
     gulp.dest(path.join(src.dist, 'modules'))
   );
 
-  var errorHandler = function(err) {
+  merged.on('error', function(err) {
     gutil.log(chalk.red(util.format('Plugin error: %s', err.message)));
-  };
+  });
   combinedUnified.on('error',errorHandler);
   combinedModules.on('error',errorHandler);
 
-  return true;
+  return merged;
 
 });
 gulp.task('scripts:pages', function(foo) {
 
-  var combined = combine(
+  var merged = merge(
 
     // Build unified package
     gulp.src([src.index, src.scripts], {cwd: src.cwd})
@@ -177,11 +177,11 @@ gulp.task('scripts:pages', function(foo) {
 
   );
 
-  combined.on('error', function(err) {
+  merged.on('error', function(err) {
     gutil.log(chalk.red(util.format('Plugin error: %s', err.message)));
   });
 
-  return combined;
+  return merged;
 
 });
 
@@ -193,7 +193,7 @@ var ngmin = require('gulp-ngmin');
 var createModuleName = function(src) { return 'mgcrea.ngStrap.' + src.split(path.sep)[0]; };
 gulp.task('templates:dist', function() {
 
-  var combinedUnified = combine(
+  var merged = merge(
     // Build unified package
     gulp.src(src.templates, {cwd: src.cwd}),
     htmlmin({removeComments: true, collapseWhitespace: true}),
@@ -212,31 +212,30 @@ gulp.task('templates:dist', function() {
 
   var combinedModules = combine(
     // Build individual modules
-    gulp.src(src.templates, {cwd: src.cwd}),
-    htmlmin({removeComments: true, collapseWhitespace: true}),
-    ngtemplate({module: createModuleName}),
-    ngmin(),
-    rename(function(path){ path.dirname = ''; }), // flatten
-    concat.header(banner),
-    gulp.dest(path.join(src.dist, 'modules')),
-    rename(function(path) { path.extname = '.min.js'; }),
-    uglify(),
-    concat.header(banner),
-    gulp.dest(path.join(src.dist, 'modules'))
-  )
+    gulp.src(src.templates, {cwd: src.cwd})
+      .pipe(htmlmin({removeComments: true, collapseWhitespace: true}))
+      .pipe(ngtemplate({module: createModuleName}))
+      .pipe(ngmin())
+      .pipe(rename(function(path){ path.dirname = ''; })) // flatten
+      .pipe(concat.header(banner))
+      .pipe(gulp.dest(path.join(src.dist, 'modules')))
+      .pipe(rename(function(path) { path.extname = '.min.js'; }))
+      .pipe(uglify())
+      .pipe(concat.header(banner))
+      .pipe(gulp.dest(path.join(src.dist, 'modules')))
 
-  var errorHandler = function(err) {
+  );
+
+  merged.on('error', function(err) {
     gutil.log(chalk.red(util.format('Plugin error: %s', err.message)));
-  };
+  });
 
-  combinedUnified.on('error', errorHandler);
-  combinedModules.on('error', errorHandler);
-  return true;
+  return merged;
 
 });
 gulp.task('templates:pages', function() {
 
-  var combined = combine(
+  var merged = merge(
 
     // Build docs partials
     gulp.src(['views/sidebar.html', 'views/partials/*.html'], {cwd: docs.cwd, base: docs.cwd})
@@ -284,11 +283,11 @@ gulp.task('templates:pages', function() {
 
   );
 
-  combined.on('error', function(err) {
+  merged.on('error', function(err) {
     gutil.log(chalk.red(util.format('Plugin error: %s', err.message)));
   });
 
-  return combined;
+  return merged;
 
 });
 gulp.task('templates:test', function() {
@@ -309,7 +308,7 @@ gulp.task('templates:test', function() {
 //
 var prefix = require('gulp-autoprefixer');
 var less = require('gulp-less');
-var safeLess = combine(less());
+var safeLess = merge(less());
 safeLess.on('error', function(err) {
   gutil.log(chalk.red(util.format('Plugin error: %s', err.message)));
 });
@@ -338,7 +337,7 @@ var nginclude = require('gulp-nginclude');
 var cleancss = require('gulp-cleancss');
 gulp.task('views:pages', function() {
 
-  var combined = combine(
+  var merged = merge(
 
     // Build views
     // gulp.src(docs.views, {cwd: docs.cwd})
@@ -357,11 +356,11 @@ gulp.task('views:pages', function() {
 
   );
 
-  combined.on('error', function(err) {
+  merged.on('error', function(err) {
     gutil.log(chalk.red(util.format('Plugin error: %s', err.message)));
   });
 
-  return combined;
+  return merged;
 });
 
 
@@ -399,6 +398,7 @@ gulp.task('karma:server', ['templates:test'], function() {
     process.exit(code);
   });
 });
+// codeclimate-test-reporter
 gulp.task('karma:travis', ['templates:test'], function() {
   karma.start({
     configFile: path.join(__dirname, 'test/karma.conf.js'),
