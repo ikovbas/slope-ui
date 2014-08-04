@@ -204,11 +204,16 @@ angular.module('mgcrea.ngStrap.modal', ['mgcrea.ngStrap.helpers.dimensions']).pr
           evt.which === 27 && $modal.hide();
         };
         $modal.$onKeyDown = function (evt) {
-          var allowBackspace = [
+          var typesBackspaceAllowed = [
               'text',
               'textarea'
             ];
-          if (evt.which === 8 && allowBackspace.indexOf(document.activeElement.type) === -1) {
+          var activeEl = document.activeElement;
+          var allowBackspace = typesBackspaceAllowed.indexOf(activeEl.type) !== -1;
+          if (allowBackspace && $(activeEl).is('[readonly]')) {
+            allowBackspace = false;
+          }
+          if (evt.which === 8 && !allowBackspace) {
             evt.preventDefault();
             evt.stopPropagation();
             $modal.hide();
