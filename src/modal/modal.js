@@ -221,7 +221,7 @@ angular.module('mgcrea.ngStrap.modal', ['mgcrea.ngStrap.helpers.dimensions'])
           var typesBackspaceAllowed = ['text', 'textarea'];
           var activeEl = document.activeElement;
           var allowBackspace = typesBackspaceAllowed.indexOf(activeEl.type) !== -1;
-          if (allowBackspace && $(activeEl).is('[readonly]')) {
+          if (allowBackspace && activeEl.hasAttribute('readonly')) {
             allowBackspace = false;
           }
           if (evt.which === 8 && !allowBackspace) {
