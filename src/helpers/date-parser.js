@@ -59,7 +59,11 @@ angular.module('mgcrea.ngStrap.helpers.dateParser', [])
         'h'     : proto.setHours,
         'dd'    : proto.setDate,
         'd'     : proto.setDate,
-        'a'     : function(value) { var hours = this.getHours(); return this.setHours(value.match(/pm/i) ? hours + 12 : hours); },
+        'a'     : function(value) {
+          var hours = this.getHours();
+          if (value.match(/am/i) && hours === 12) hours = 0;
+          return this.setHours(value.match(/pm/i) && hours !== 12 ? hours + 12 : hours);
+        },
         'MMMM'  : function(value) { return this.setMonth($locale.DATETIME_FORMATS.MONTH.indexOf(value)); },
         'MMM'   : function(value) { return this.setMonth($locale.DATETIME_FORMATS.SHORTMONTH.indexOf(value)); },
         'MM'    : function(value) { return this.setMonth(1 * value - 1); },
