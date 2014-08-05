@@ -3012,9 +3012,9 @@ angular.module('mgcrea.ngStrap.timepicker', [
             ];
           if (selectedIndex === 0) {
             if (evt.keyCode === 38)
-              newDate.setHours(hours - parseInt(options.hourStep, 10));
-            else if (evt.keyCode === 40)
               newDate.setHours(hours + parseInt(options.hourStep, 10));
+            else if (evt.keyCode === 40)
+              newDate.setHours(hours - parseInt(options.hourStep, 10));
             hoursLength = dateFilter(newDate, 'h').length;
             selectRange = [
               0,
@@ -3022,9 +3022,9 @@ angular.module('mgcrea.ngStrap.timepicker', [
             ];
           } else if (selectedIndex === 1) {
             if (evt.keyCode === 38)
-              newDate.setMinutes(minutes - parseInt(options.minuteStep, 10));
-            else if (evt.keyCode === 40)
               newDate.setMinutes(minutes + parseInt(options.minuteStep, 10));
+            else if (evt.keyCode === 40)
+              newDate.setMinutes(minutes - parseInt(options.minuteStep, 10));
             minutesLength = dateFilter(newDate, 'mm').length;
             selectRange = [
               hoursLength + 1,
