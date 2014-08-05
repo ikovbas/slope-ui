@@ -244,6 +244,7 @@ angular.module('mgcrea.ngStrap.timepicker', [
               newDate.setHours(hours - parseInt(options.hourStep, 10));
             else if (evt.keyCode === 40)
               newDate.setHours(hours + parseInt(options.hourStep, 10));
+            hoursLength = dateFilter(newDate, 'h').length;
             selectRange = [
               0,
               hoursLength
@@ -253,6 +254,7 @@ angular.module('mgcrea.ngStrap.timepicker', [
               newDate.setMinutes(minutes - parseInt(options.minuteStep, 10));
             else if (evt.keyCode === 40)
               newDate.setMinutes(minutes + parseInt(options.minuteStep, 10));
+            minutesLength = dateFilter(newDate, 'mm').length;
             selectRange = [
               hoursLength + 1,
               hoursLength + 1 + minutesLength
@@ -265,7 +267,7 @@ angular.module('mgcrea.ngStrap.timepicker', [
               hoursLength + 1 + minutesLength + 3
             ];
           }
-          $timepicker.select(newDate, selectedIndex, true);
+          !lateralMove && $timepicker.select(newDate, selectedIndex, true);
           createSelection(selectRange[0], selectRange[1]);
           parentScope.$digest();
         };
