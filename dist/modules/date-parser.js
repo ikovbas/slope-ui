@@ -1,6 +1,6 @@
 /**
  * angular-strap
- * @version v2.0.4 - 2014-08-04
+ * @version v2.0.4 - 2014-08-05
  * @link http://mgcrea.github.io/angular-strap
  * @author Olivier Louvignes (olivier@mg-crea.com)
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -61,7 +61,9 @@ angular.module('mgcrea.ngStrap.helpers.dateParser', []).provider('$dateParser', 
               'd': proto.setDate,
               'a': function (value) {
                 var hours = this.getHours();
-                return this.setHours(value.match(/pm/i) ? hours + 12 : hours);
+                if (value.match(/am/i) && hours === 12)
+                  hours = 0;
+                return this.setHours(value.match(/pm/i) && hours !== 12 ? hours + 12 : hours);
               },
               'MMMM': function (value) {
                 return this.setMonth($locale.DATETIME_FORMATS.MONTH.indexOf(value));
