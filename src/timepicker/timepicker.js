@@ -220,16 +220,18 @@ angular.module('mgcrea.ngStrap.timepicker', ['mgcrea.ngStrap.helpers.dateParser'
           if(selectedIndex === 0) {
             if(evt.keyCode === 38) newDate.setHours(hours - parseInt(options.hourStep, 10));
             else if(evt.keyCode === 40) newDate.setHours(hours + parseInt(options.hourStep, 10));
+            hoursLength = dateFilter(newDate, 'h').length;
             selectRange = [0, hoursLength];
           } else if(selectedIndex === 1) {
             if(evt.keyCode === 38) newDate.setMinutes(minutes - parseInt(options.minuteStep, 10));
             else if(evt.keyCode === 40) newDate.setMinutes(minutes + parseInt(options.minuteStep, 10));
+            minutesLength = dateFilter(newDate, 'mm').length;
             selectRange = [hoursLength + 1, hoursLength + 1 + minutesLength];
           } else if(selectedIndex === 2) {
             if(!lateralMove) $timepicker.switchMeridian();
             selectRange = [hoursLength + 1 + minutesLength + 1, hoursLength + 1 + minutesLength + 3];
           }
-          $timepicker.select(newDate, selectedIndex, true);
+          !lateralMove && $timepicker.select(newDate, selectedIndex, true);
           createSelection(selectRange[0], selectRange[1]);
           parentScope.$digest();
         };
