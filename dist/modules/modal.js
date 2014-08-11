@@ -1,6 +1,6 @@
 /**
  * angular-strap
- * @version v2.0.4 - 2014-08-05
+ * @version v2.0.4 - 2014-08-11
  * @link http://mgcrea.github.io/angular-strap
  * @author Olivier Louvignes (olivier@mg-crea.com)
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -209,9 +209,14 @@ angular.module('mgcrea.ngStrap.modal', ['mgcrea.ngStrap.helpers.dimensions']).pr
               'textarea'
             ];
           var activeEl = document.activeElement;
+          /* Check if element is an editable type */
           var allowBackspace = typesBackspaceAllowed.indexOf(activeEl.type) !== -1;
           if (allowBackspace && activeEl.hasAttribute('readonly')) {
+            /* Disregard editable elements set to read-only */
             allowBackspace = false;
+          } else {
+            /* Check if element has contentEditable enabled */
+            allowBackspace = angular.element(activeEl).attr('contentEditable') === 'true';
           }
           if (evt.which === 8 && !allowBackspace) {
             evt.preventDefault();
