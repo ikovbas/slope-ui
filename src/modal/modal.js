@@ -220,9 +220,15 @@ angular.module('mgcrea.ngStrap.modal', ['mgcrea.ngStrap.helpers.dimensions'])
 
           var typesBackspaceAllowed = ['text', 'textarea'];
           var activeEl = document.activeElement;
+          /* Check if element is an editable type */
           var allowBackspace = typesBackspaceAllowed.indexOf(activeEl.type) !== -1;
           if (allowBackspace && activeEl.hasAttribute('readonly')) {
+            /* Disregard editable elements set to read-only */
             allowBackspace = false;
+          }
+          else {
+            /* Check if element has contentEditable enabled */
+            allowBackspace = angular.element(activeEl).attr('contentEditable') === 'true';
           }
           if (evt.which === 8 && !allowBackspace) {
             evt.preventDefault();
