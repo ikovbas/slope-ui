@@ -226,7 +226,7 @@ angular.module('mgcrea.ngStrap.modal', ['mgcrea.ngStrap.helpers.dimensions'])
             /* Disregard editable elements set to read-only */
             allowBackspace = false;
           }
-          else {
+          else if (!allowBackspace) {
             /* Check if element has contentEditable enabled */
             allowBackspace = angular.element(activeEl).attr('contentEditable') === 'true';
           }
