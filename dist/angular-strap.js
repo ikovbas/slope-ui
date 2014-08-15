@@ -1,6 +1,6 @@
 /**
  * angular-strap
- * @version v2.0.4 - 2014-08-11
+ * @version v2.0.4 - 2014-08-15
  * @link http://mgcrea.github.io/angular-strap
  * @author Olivier Louvignes (olivier@mg-crea.com)
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -1658,6 +1658,13 @@ angular.module('mgcrea.ngStrap.helpers.dimensions', []).factory('dimensions', [
         value -= fn.css(element, 'paddingLeft', true) + fn.css(element, 'paddingRight', true) + fn.css(element, 'borderLeftWidth', true) + fn.css(element, 'borderRightWidth', true);
       }
       return value;
+    };
+    /* This does not currently check to see that it is a valid node.
+       This will probably change.
+       A more appropriate name for its current behavior would be isNotjQueryElement
+    */
+    fn.isDirectElement = function (element) {
+      return !(element.prop && element.attr && element.find);
     };
     return fn;
   }
@@ -3382,6 +3389,7 @@ angular.module('mgcrea.ngStrap.tooltip', ['mgcrea.ngStrap.helpers.dimensions']).
           // Options: target
           if (options.target) {
             options.target = angular.isElement(options.target) ? options.target : findElement(options.target)[0];
+            options.target = dimensions.isDirectElement(options.target) ? options.target : options.target[0];
           }
           // Options: show
           if (options.show) {
