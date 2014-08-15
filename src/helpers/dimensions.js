@@ -145,6 +145,14 @@ angular.module('mgcrea.ngStrap.helpers.dimensions', [])
       return value;
     };
 
+    /* This does not currently check to see that it is a valid node.
+       This will probably change.
+       A more appropriate name for its current behavior would be isNotjQueryElement
+    */
+    fn.isDirectElement = function(element) {
+      return !(element.prop && element.attr && element.find);
+    };
+
     return fn;
 
   });
