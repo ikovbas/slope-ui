@@ -1,7 +1,7 @@
 Early development.
 
 Current roadmap:
-- UIkit fork: Port to Sass. Port customizer to Sass. Build custom visual style and consider renaming UIkit classes. Decide if any classes are beyond the scope of this project and clean up as necessary.
+- UIkit fork: Port to Sass. Port customizer to Sass. Dist node-webkit customizers? Build custom visual style and consider renaming UIkit classes. Decide if any classes are beyond the scope of this project and clean up as necessary.
 - Angular-strap fork: Slim down configuration options. Decide on a set of UI conventions and remove functionality from angular-strap that doesn't fit these conventions. Identify bootstrap-dependent js and take note.
 - Buttons, panels, modals
 - Evaluate progress
