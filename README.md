@@ -1,3 +1,11 @@
+Early development.
+
+Current roadmap:
+- UIkit fork: Build custom visual style and consider renaming UIkit classes. Decide if any classes are beyond the scope of this project and clean up as necessary.
+- Angular-strap fork: Slim down configuration options. Decide on a set of UI conventions and remove functionality from angular-strap that doesn't fit these conventions. Identify bootstrap-dependent js and take note.
+- Buttons, panels, modals
+- Evaluate progress
+
 ## Copyright and license
 
 	The MIT License
