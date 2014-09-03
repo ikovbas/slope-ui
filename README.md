@@ -6,6 +6,8 @@ Current roadmap:
 - Buttons, panels, modals
 - Evaluate progress
 
+፨ Progress: Decision making. Roadmapping. Wrote readmes and licenses. Chores are done, time to develop some computer software. https://i.imgur.com/W6sm63k.gif
+
 ## Copyright and license
 
 	The MIT License
