@@ -79,7 +79,7 @@ Please submit all pull requests the against master branch. If your unit test con
 
 	The MIT License
 
-	Copyright (c) 2012 - 2014 Olivier Louvignes
+        Copyright (c) 2012 - 2014 Olivier Louvignes
 	
         Copyright (c) 2014 Nick Perez
 
